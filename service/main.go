@@ -10,18 +10,21 @@ import (
 	"reflect"
 	"strconv"
 
+	"cloud.google.com/go/bigtable"
 	"cloud.google.com/go/storage"
 	"github.com/olivere/elastic"
 	"github.com/pborman/uuid"
+	"google.golang.org/api/option"
 )
 
 const (
 	POST_INDEX = "post"
 	POST_TYPE  = "post"
 
-	DISTANCE    = "200km"
-	ES_URL      = "http://35.237.109.5:9200"
-	BUCKET_NAME = "hao-post-images"
+	DISTANCE        = "200km"
+	ES_URL          = "http://35.237.109.5:9200"
+	BUCKET_NAME     = "hao-post-images"
+	ENABLE_BIGTABLE = true
 )
 
 type Location struct {
@@ -87,6 +90,14 @@ func handlerPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Printf("Saved one post to ElasticSearch: %s", p.Message)
+
+	// big table related
+	fmt.Printf("Post is saved to Index: %s\n", p.Message)
+
+	if ENABLE_BIGTABLE {
+		saveToBigTable(p, id)
+	}
+
 }
 
 func handlerSearch(w http.ResponseWriter, r *http.Request) {
@@ -148,6 +159,31 @@ func createIndexIfNotExist() {
 			panic(err)
 		}
 	}
+}
+
+// Save a post to BigTable
+func saveToBigTable(p *Post, id string) {
+	ctx := context.Background()
+	bt_client, err := bigtable.NewClient(ctx, "goaround", "around-post", option.WithCredentialsFile("GoAround-1b346d3fa968.json"))
+	if err != nil {
+		panic(err)
+		return
+	}
+	tbl := bt_client.Open("post")
+	mut := bigtable.NewMutation()
+	t := bigtable.Now()
+	mut.Set("post", "user", t, []byte(p.User))
+	mut.Set("post", "message", t, []byte(p.Message))
+	mut.Set("location", "lat", t, []byte(strconv.FormatFloat(p.Location.Lat, 'f', -1, 64)))
+	mut.Set("location", "lon", t, []byte(strconv.FormatFloat(p.Location.Lon, 'f', -1, 64)))
+
+	err = tbl.Apply(ctx, id, mut)
+	if err != nil {
+		panic(err)
+		return
+	}
+	fmt.Printf("Post is saved to BigTable: %s\n", p.Message)
+
 }
 
 // Save a post to ElasticSearch
