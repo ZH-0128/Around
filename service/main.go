@@ -22,9 +22,9 @@ const (
 	POST_TYPE  = "post"
 
 	DISTANCE        = "200km"
-	ES_URL          = "http://35.237.109.5:9200"
+	ES_URL          = "http://35.237.216.180:9200"
 	BUCKET_NAME     = "hao-post-images"
-	ENABLE_BIGTABLE = true
+	ENABLE_BIGTABLE = false
 )
 
 type Location struct {
