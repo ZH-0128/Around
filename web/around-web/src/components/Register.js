@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Input, Button } from 'antd';
+import {Form, Input, Button, message} from 'antd';
 import '../styles/Register.css';
 
 class RegistrationForm extends React.Component {
@@ -12,14 +12,34 @@ class RegistrationForm extends React.Component {
         e.preventDefault();
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
-                console.log('Received values of form: ', values);
+                console.log('Received values of form: ', values)
+                // send request
+                fetch('https://around-75015.appspot.com/api/v1/signup', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        username: values.username,
+                        password: values.password,
+                    }),
+                }).then((response) => {
+                    if (response.ok) {
+                        return response.text();
+                    }
+                    throw new Error(response.statusText);
+                })
+                    .then((data) => {
+                        message.success('Registration succeed!');
+                    })
+                    .catch((e) => {
+                        console.log(e);
+                        message.error('Registration failed!');
+                    });
             }
         });
     }
 
     handleConfirmBlur = (e) => {
         const value = e.target.value;
-        this.setState({ confirmDirty: this.state.confirmDirty || !!value });
+        this.setState({confirmDirty: this.state.confirmDirty || !!value});
     }
 
     compareToFirstPassword = (rule, value, callback) => {
@@ -34,22 +54,22 @@ class RegistrationForm extends React.Component {
     validateToNextPassword = (rule, value, callback) => {
         const form = this.props.form;
         if (value && this.state.confirmDirty) {
-            form.validateFields(['confirm'], { force: true });
+            form.validateFields(['confirm'], {force: true});
         }
         callback();
     }
 
     render() {
-        const { getFieldDecorator } = this.props.form;
+        const {getFieldDecorator} = this.props.form;
 
         const formItemLayout = {
             labelCol: {
-                xs: { span: 24 },
-                sm: { span: 8 },
+                xs: {span: 24},
+                sm: {span: 8},
             },
             wrapperCol: {
-                xs: { span: 24 },
-                sm: { span: 16 },
+                xs: {span: 24},
+                sm: {span: 16},
             },
         };
         const tailFormItemLayout = {
@@ -72,9 +92,9 @@ class RegistrationForm extends React.Component {
                     label="Username"
                 >
                     {getFieldDecorator('username', {
-                        rules: [{ required: true, message: 'Please input your username!' }],
+                        rules: [{required: true, message: 'Please input your username!'}],
                     })(
-                        <Input />
+                        <Input/>
                     )}
                 </Form.Item>
                 <Form.Item
@@ -88,7 +108,7 @@ class RegistrationForm extends React.Component {
                             validator: this.validateToNextPassword,
                         }],
                     })(
-                        <Input type="password" />
+                        <Input type="password"/>
                     )}
                 </Form.Item>
                 <Form.Item
@@ -102,7 +122,7 @@ class RegistrationForm extends React.Component {
                             validator: this.compareToFirstPassword,
                         }],
                     })(
-                        <Input type="password" onBlur={this.handleConfirmBlur} />
+                        <Input type="password" onBlur={this.handleConfirmBlur}/>
                     )}
                 </Form.Item>
                 <Form.Item {...tailFormItemLayout}>
@@ -113,4 +133,4 @@ class RegistrationForm extends React.Component {
     }
 }
 
-export const Register = Form.create({ name: 'register' })(RegistrationForm);
+export const Register = Form.create({name: 'register'})(RegistrationForm);
