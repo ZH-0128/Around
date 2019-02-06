@@ -1,6 +1,6 @@
 import React from 'react';
 import {Form, Input, Button, message} from 'antd';
-import '../styles/Register.css';
+import '../index.css';
 
 class RegistrationForm extends React.Component {
     state = {
