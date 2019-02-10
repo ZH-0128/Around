@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import {TopBar} from './components/TopBar.js';
-import {Main} from './components/Main.js';
+import {TopBar} from './TopBar.js';
+import {Main} from './Main.js';
 
 class App extends Component {
     render() {
