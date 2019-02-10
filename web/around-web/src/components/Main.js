@@ -4,6 +4,7 @@ import {Login} from './Login.js';
 import '../styles/Main.css';
 import { Switch, Route } from 'react-router-dom';
 import {Register} from "./Register";
+import {Home} from "./home";
 
 export class Main extends React.Component {
     render() {
@@ -13,6 +14,7 @@ export class Main extends React.Component {
                     <Route exact path="/" component={Login}/>
                     <Route path="/login" component={Login}/>
                     <Route path="/register" component={Register}/>
+                    <Route path="/home" component={Home}/>
                     <Route component={Login}/>
                 </Switch>
             </div>
