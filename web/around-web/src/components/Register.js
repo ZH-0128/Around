@@ -2,6 +2,7 @@ import React from 'react';
 import {Form, Input, Button, message} from 'antd';
 import '../index.css';
 import {API_ROOT} from "../constants";
+import {Link} from "react-router-dom";
 
 class RegistrationForm extends React.Component {
     state = {
@@ -26,14 +27,13 @@ class RegistrationForm extends React.Component {
                         return response.text();
                     }
                     throw new Error(response.statusText);
-                })
-                    .then((data) => {
-                        message.success('Registration succeed!');
-                    })
-                    .catch((e) => {
-                        console.log(e);
-                        message.error('Registration failed!');
-                    });
+                }).then((data) => {
+                    message.success('Registration succeed!');
+                    this.props.history.push('/login');
+                }).catch((e) => {
+                    console.log(e);
+                    message.error('Registration failed!');
+                });
             }
         });
     }
@@ -128,6 +128,7 @@ class RegistrationForm extends React.Component {
                 </Form.Item>
                 <Form.Item {...tailFormItemLayout}>
                     <Button type="primary" htmlType="submit">Register</Button>
+                    <div>I already have an account, go back to <Link to="/login">login</Link></div>
                 </Form.Item>
             </Form>
         );
