@@ -3,7 +3,7 @@ import {Login} from './Login.js';
 import '../styles/Main.css';
 import {Switch, Route, Redirect} from 'react-router-dom';
 import {Register} from "./Register";
-import {Home} from "./home";
+import {Home} from "./Home";
 
 export class Main extends React.Component {
 
