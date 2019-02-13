@@ -1,6 +1,8 @@
 import React from 'react';
 import {Tabs, Button, Spin} from 'antd';
 import {GEO_OPTIONS, POS_KEY, API_ROOT, TOKEN_KEY, AUTH_HEADER} from "../constants";
+import {Gallery} from "./Gallery";
+
 
 const TabPane = Tabs.TabPane;
 
@@ -78,8 +80,18 @@ export class Home extends React.Component {
     } else if (isLoadingPosts) {
       return <Spin tip="Loading posts..."/>
     } else if (posts && posts.length > 0) {
-      return <div>{JSON.stringify(posts)}</div>;
-      // return (<Gallery images={images}/>);
+      const images = this.state.posts.map((post) => {
+        return {
+          user: post.user,
+          src: post.url,
+          thumbnail: post.url,
+          caption: post.message,
+          thumbnailWidth: 400,
+          thumbnailHeight: 300,
+        }
+      });
+
+      return <Gallery images={images}/>;
     } else {
       return 'No nearby posts.';
     }
